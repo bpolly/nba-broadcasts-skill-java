@@ -17,16 +17,12 @@ public class nba_scraper {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-
 		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
-		
-		
-		
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 	    BufferedWriter writer = new BufferedWriter(new FileWriter("src/nba_broadcast_schedule.html"));
 	    String line;
 	    while ((line = reader.readLine()) != null) {
-	       //System.out.println(line);
 	    	// For whatever reason, CDATA breaks Jsoup
 	    	if (line.contains("<![CDATA[")){ line = line.replace("<![CDATA[", ""); }
 	    	writer.write(line);
@@ -35,13 +31,14 @@ public class nba_scraper {
         reader.close();
 	    writer.close();
 		
-
+        // parse the local HTML file
 		File nba_broadcast_html = new File("src/nba_broadcast_schedule.html");
 		Document doc = Jsoup.parse(nba_broadcast_html, "UTF-8");
-		
+
+        // div with schedule in it
 		Element content = doc.getElementById("scheduleMain");
-		//System.out.println(content);
-		
+
+        // get game rows
 		Elements rows = content.select("tr:not(.header):not(.title)");
 		for (Element row : rows) {
 			String date = row.getElementsByClass("dt").first().text();
