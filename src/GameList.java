@@ -1,4 +1,6 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class GameList {
 	int DEFAULT_CUTOFF = 7;
@@ -28,7 +30,8 @@ public class GameList {
 	// Get a list of Today's games
 	public ArrayList<Game> getTodaysGames(){
 		ArrayList<Game> todaysGames = new ArrayList<Game>();
-		String todayDate = null;
+		Date date = new Date();
+		String todayDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
 		//todayDate = time.strftime("%a, %B %-d");
 		
 		for(Game game : games){

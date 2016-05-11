@@ -5,6 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
+
 
 import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
@@ -16,9 +20,9 @@ public class nba_scraper {
 	static GameList gameList = new GameList();
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
 
+        // Write HTML to local file
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 	    BufferedWriter writer = new BufferedWriter(new FileWriter("src/nba_broadcast_schedule.html"));
 	    String line;
@@ -38,10 +42,32 @@ public class nba_scraper {
         // div with schedule in it
 		Element content = doc.getElementById("scheduleMain");
 
-        // get game rows
-		Elements rows = content.select("tr:not(.header):not(.title)");
-		for (Element row : rows) {
+        // get years from header
+        Element headerRow = content.getElementsByClass("header").first();
+        String yearRange = headerRow.text(); // NATIONAL TV SCHEDULE - 2015-16
+        yearRange = yearRange.substring(yearRange.lastIndexOf(' ') + 1); // 2015-16
+        String year1 = yearRange.substring(0, yearRange.lastIndexOf('-')); // 2015
+        String year2 = (Integer.parseInt(year1) + 1) + ""; // 2016
+
+        // get gameRows
+		Elements gameRows = content.select("tr:not(.header):not(.title)");
+        String lastDate="";
+		for (Element row : gameRows) {
 			String date = row.getElementsByClass("dt").first().text();
+            SimpleDateFormat oldSDF = new SimpleDateFormat("EEE, MMM dd");
+            SimpleDateFormat newSDF = new SimpleDateFormat("MM/dd/yyyy");
+            try {
+                if(date.length() == 0) date = lastDate;
+                date = newSDF.format(oldSDF.parse(date));
+                int month = Integer.parseInt(date.substring(0,2));
+                if(month <= 7) {date = date.replace("1970", year2);}
+                else {date = date.replace("1970", year1);}
+
+                lastDate = date;
+            } catch(ParseException pe){
+                System.err.println(pe);
+            }
+
 			Elements teams_elems = row.select(".gm a");
 			String[] teams = {teams_elems.first().text(), teams_elems.last().text()};
 			String time = row.getElementsByClass("tm").first().text();
