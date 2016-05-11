@@ -28,15 +28,14 @@ public class GameList {
 	}
 	
 	// Get a list of Today's games
-	public ArrayList<Game> getTodaysGames(){
-		ArrayList<Game> todaysGames = new ArrayList<Game>();
+	public GameList getTodaysGames(){
+		GameList todaysGames = new GameList();
 		Date date = new Date();
-		String todayDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
-		//todayDate = time.strftime("%a, %B %-d");
-		
+		String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
+
 		for(Game game : games){
 			if(game.date.equals(todayDate)){
-				todaysGames.add(game);
+				todaysGames.addGame(game);
 			}
 		}
 		
@@ -44,15 +43,15 @@ public class GameList {
 	}
 	
 	// Get a list of Tomorrow's games
-	public ArrayList<Game> getTomorrowsGames(){
+	public GameList getTomorrowsGames(){
 		return null;
 	}
 	
-	public ArrayList<Game> getGamesGivenTeam(String team){
+	public GameList getGamesGivenTeam(String team){
 		return null;
 	}
 	
-	public ArrayList<Game> getGamesGivenTime(String time){
+	public GameList getGamesGivenTime(String time){
 		return null;
 	}
 	

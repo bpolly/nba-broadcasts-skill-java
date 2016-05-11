@@ -8,6 +8,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.util.ArrayList;
 
 
 import org.apache.commons.io.FilenameUtils;
@@ -58,7 +59,7 @@ public class nba_scraper {
             SimpleDateFormat newSDF = new SimpleDateFormat("MM/dd/yyyy");
             try {
                 if(date.length() == 0) date = lastDate;
-                date = newSDF.format(oldSDF.parse(date));
+                else { date = newSDF.format(oldSDF.parse(date));}
                 int month = Integer.parseInt(date.substring(0,2));
                 if(month <= 7) {date = date.replace("1970", year2);}
                 else {date = date.replace("1970", year1);}
@@ -76,9 +77,12 @@ public class nba_scraper {
 
 			Game newGame = new Game(date, teams, time, networks);
 			gameList.addGame(newGame);
-			newGame.print();
-			System.out.println();
+			//newGame.print();
+			//System.out.println();
 		}
+
+        GameList todaysGames = gameList.getTodaysGames();
+        todaysGames.printGames();
 		
 	}
 	
