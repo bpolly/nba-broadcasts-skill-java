@@ -85,7 +85,7 @@ public class nba_scraper {
         GameList todaysGames = gameList.getTomorrowsGames();
         //todaysGames.printGames();
 
-        GameList spursGames = gameList.getGamesGivenTeam("heat");
+        GameList spursGames = gameList.getGamesGivenTeam("toronto raptors");
         spursGames.printGames();
 
 

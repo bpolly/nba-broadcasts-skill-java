@@ -10,7 +10,7 @@ public class Game {
 		teams = new ArrayList<String>();
 		networks = new ArrayList<String>();
 		for(String team : in_teams){
-            teams.add(team);
+            teams.add(TeamList.findTeamGivenNickname(team).name);
         }
         for(String network : in_networks){
             networks.add(network);
@@ -34,7 +34,7 @@ public class Game {
 	}
 	
 	private static void printTeams(ArrayList<String> teams){
-		System.out.println(teams.get(0) + " vs " + teams.get(0));
+		System.out.println(teams.get(0) + " vs " + teams.get(1));
 	}
 	
 	private static void printNetworks(ArrayList<String> in_networks){
