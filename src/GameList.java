@@ -1,4 +1,7 @@
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -31,7 +34,13 @@ public class GameList {
 	public GameList getTodaysGames(){
 		GameList todaysGames = new GameList();
 		Date date = new Date();
-		String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
+		//String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
+
+        // Java 8 DateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime todaysDateLDT = LocalDateTime.now();
+        String todayDate = todaysDateLDT.format(formatter); // "05/12/2016"
+
 
 		for(Game game : games){
 			if(game.date.equals(todayDate)){
@@ -44,7 +53,24 @@ public class GameList {
 	
 	// Get a list of Tomorrow's games
 	public GameList getTomorrowsGames(){
-		return null;
+        GameList tomorrowsGames = new GameList();
+        Date date = new Date();
+        //String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
+
+        // Java 8 DateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime tomorrowDateLTD = LocalDateTime.now();
+        tomorrowDateLTD = tomorrowDateLTD.plusDays(1);
+        String tomorrowDate = tomorrowDateLTD.format(formatter); // "05/12/2016"
+
+
+        for(Game game : games){
+            if(game.date.equals(tomorrowDate)){
+                tomorrowsGames.addGame(game);
+            }
+        }
+
+        return tomorrowsGames;
 	}
 	
 	public GameList getGamesGivenTeam(String team){

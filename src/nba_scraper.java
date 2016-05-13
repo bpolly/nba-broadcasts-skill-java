@@ -81,7 +81,7 @@ public class nba_scraper {
 			//System.out.println();
 		}
 
-        GameList todaysGames = gameList.getTodaysGames();
+        GameList todaysGames = gameList.getTomorrowsGames();
         todaysGames.printGames();
 		
 	}
