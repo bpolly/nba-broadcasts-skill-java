@@ -9,9 +9,11 @@ public class GameList {
 	int DEFAULT_CUTOFF = 7;
 	int listSize = 0;
 	ArrayList<Game> games = new ArrayList<Game>();
-	
-	public GameList() {
-		// Initialization Code here
+    static TeamList teamList = new TeamList();
+
+
+    public GameList() {
+        teamList.initialize();
 	}
 	
 	// Add a game to the GameList
@@ -74,7 +76,14 @@ public class GameList {
 	}
 	
 	public GameList getGamesGivenTeam(String team){
-		return null;
+        String teamName = teamList.findTeamGivenNickname(team).toString();
+        GameList teamGames = new GameList();
+        for(Game game : games){
+            if(game.teams.contains(teamName)){
+                teamGames.addGame(game);
+            }
+        }
+		return teamGames;
 	}
 	
 	public GameList getGamesGivenTime(String time){

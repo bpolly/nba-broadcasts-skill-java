@@ -20,6 +20,7 @@ import org.jsoup.select.Elements;
 public class nba_scraper {
 	static GameList gameList = new GameList();
 
+
 	public static void main(String[] args) throws IOException {
 		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
 
@@ -82,7 +83,12 @@ public class nba_scraper {
 		}
 
         GameList todaysGames = gameList.getTomorrowsGames();
-        todaysGames.printGames();
+        //todaysGames.printGames();
+
+        GameList spursGames = gameList.getGamesGivenTeam("spurs");
+        spursGames.printGames();
+
+
 		
 	}
 	

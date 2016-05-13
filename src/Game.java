@@ -1,13 +1,19 @@
+import java.util.ArrayList;
 
 public class Game {
 	String date, time;
-	String[] teams, networks;
+	ArrayList<String> teams, networks;
 	
 	public Game(String in_date, String[] in_teams, String in_time, String[] in_networks) {
 		date = in_date;
 		time = in_time;
-		teams = in_teams;
-		networks = in_networks;
+		for(String team : in_teams){
+            System.out.println(team);
+            teams.add(team);
+        }
+        for(String network : in_networks){
+            networks.add(network);
+        }
 	}
 	
 	public String getDate(){
@@ -17,14 +23,7 @@ public class Game {
 	public String getTime(){
 		return time;
 	}
-	
-	public String[] getTeams(){
-		return teams;
-	}
-	
-	public String[] getNetworks(){
-		return networks;
-	}
+
 	
 	public void print(){
 		System.out.println(date);
@@ -33,11 +32,11 @@ public class Game {
 		printNetworks(networks);
 	}
 	
-	private static void printTeams(String[] teams){
-		System.out.println(teams[0] + " vs " + teams[1]);
+	private static void printTeams(ArrayList<String> teams){
+		System.out.println(teams.get(0) + " vs " + teams.get(0));
 	}
 	
-	private static void printNetworks(String[] in_networks){
+	private static void printNetworks(ArrayList<String> in_networks){
 		String networks = "";
 		for(String network : in_networks){
 			networks += (network + ",");
