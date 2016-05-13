@@ -86,6 +86,10 @@ public class GameList {
 			game.print();
 		}
 	}
+
+    public int size(){
+        return listSize;
+    }
 	
 
 }
