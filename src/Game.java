@@ -7,8 +7,9 @@ public class Game {
 	public Game(String in_date, String[] in_teams, String in_time, String[] in_networks) {
 		date = in_date;
 		time = in_time;
+		teams = new ArrayList<String>();
+		networks = new ArrayList<String>();
 		for(String team : in_teams){
-            System.out.println(team);
             teams.add(team);
         }
         for(String network : in_networks){

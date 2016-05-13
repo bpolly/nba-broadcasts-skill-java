@@ -16,3 +16,6 @@ log/
 target/
 
 *.html
+
+.floo
+.flooignore

@@ -13,7 +13,7 @@ public class GameList {
 
 
     public GameList() {
-        teamList.initialize();
+        //teamList.initialize();
 	}
 	
 	// Add a game to the GameList
@@ -76,7 +76,9 @@ public class GameList {
 	}
 	
 	public GameList getGamesGivenTeam(String team){
-        String teamName = teamList.findTeamGivenNickname(team).toString();
+        //String teamName = teamList.findTeamGivenNickname(team).toString();
+        Team temp = teamList.findTeamGivenNickname(team);
+        String teamName = (temp != null) ? temp.name : null;
         GameList teamGames = new GameList();
         for(Game game : games){
             if(game.teams.contains(teamName)){
