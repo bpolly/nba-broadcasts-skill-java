@@ -44,7 +44,7 @@ public class GameList {
 	// Get a list of Today's games
 	public ArrayList<Game> getTodaysGames(){
         LocalDateTime todaysDateLDT = LocalDateTime.now();
-		return dateToGameMap.get(todaysDateLDT);
+		return getGamesGivenDate(todaysDateLDT);
 	}
 	
 	// Get a list of Tomorrow's games
