@@ -22,22 +22,9 @@ public class nba_scraper {
 
 
 	public static void main(String[] args) throws IOException {
-		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
-
-        // Write HTML to local file
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-	    BufferedWriter writer = new BufferedWriter(new FileWriter("src/nba_broadcast_schedule.html"));
-	    String line;
-	    while ((line = reader.readLine()) != null) {
-	    	// For whatever reason, CDATA breaks Jsoup
-	    	if (line.contains("<![CDATA[")){ line = line.replace("<![CDATA[", ""); }
-	    	writer.write(line);
-	    	writer.newLine();
-	    }
-        reader.close();
-	    writer.close();
+		urlSetup();
 		
-        // parse the local HTML file
+		// parse the local HTML file
 		File nba_broadcast_html = new File("src/nba_broadcast_schedule.html");
 		Document doc = Jsoup.parse(nba_broadcast_html, "UTF-8");
 
@@ -90,6 +77,23 @@ public class nba_scraper {
 
 
 		
+	}
+
+	public static void urlSetup() throws IOException {
+		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
+
+		// Write HTML to local file
+		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("src/nba_broadcast_schedule.html"));
+		String line;
+		while ((line = reader.readLine()) != null) {
+			// For whatever reason, CDATA breaks Jsoup
+			if (line.contains("<![CDATA[")){ line = line.replace("<![CDATA[", ""); }
+			writer.write(line);
+			writer.newLine();
+		}
+		reader.close();
+		writer.close();
 	}
 	
 	// Get list of network Elements, get SRC, pull out filename and return list
