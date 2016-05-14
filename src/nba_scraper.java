@@ -78,18 +78,13 @@ public class nba_scraper {
 
 			Game newGame = new Game(date, teams, time, networks);
 			gameList.addGame(newGame);
-			//newGame.print();
-			//System.out.println();
 		}
 
-        GameList todaysGames = gameList.getTomorrowsGames();
-        //todaysGames.printGames();
+        ArrayList<Game> tomorrowsGames = gameList.getTomorrowsGames();
+        gameList.printGames(tomorrowsGames);
 
-        GameList spursGames = gameList.getGamesGivenTeam("toronto raptors");
-        spursGames.printGames();
-
-
-		
+        ArrayList<Game> raptorsGames = gameList.getGamesGivenTeam("toronto raptors");
+        gameList.printGames(raptorsGames);
 	}
 	
 	// Get list of network Elements, get SRC, pull out filename and return list

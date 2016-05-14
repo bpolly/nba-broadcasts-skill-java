@@ -3,97 +3,85 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 public class GameList {
 	int DEFAULT_CUTOFF = 7;
 	int listSize = 0;
-	ArrayList<Game> games = new ArrayList<Game>();
-    static TeamList teamList = new TeamList();
+	HashMap<String, ArrayList<Game>> dateToGameMap = new HashMap<>();
 
 
     public GameList() {
-        //teamList.initialize();
 	}
 	
 	// Add a game to the GameList
 	public void addGame(Game game){
-		if(!games.contains(game)){
-			games.add(game);
-			listSize++;
-		}
+		if(dateToGameMap.containsKey(game.date)) {
+			ArrayList<Game> games = dateToGameMap.get(game.date);
+            games.add(game);
+            dateToGameMap.put(game.date, games);
+		} else {
+            ArrayList<Game> games = new ArrayList<>();
+            games.add(game);
+            dateToGameMap.put(game.date, games);
+        }
+        listSize++;
 	}
 	
 	// Remove a game to the GameList
 	public void deleteGame(Game game){
-		if(!games.contains(game)){
-			games.remove(game);
-			listSize--;
-		}
+        if(dateToGameMap.containsKey(game.date)) {
+            ArrayList<Game> games = dateToGameMap.get(game.date);
+            if(games.contains(game)) {
+                games.remove(game);
+                dateToGameMap.put(game.date, games);
+            }
+        }
 	}
 	
 	// Get a list of Today's games
-	public GameList getTodaysGames(){
-		GameList todaysGames = new GameList();
-		Date date = new Date();
-		//String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
-
-        // Java 8 DateTime
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+	public ArrayList<Game> getTodaysGames(){
         LocalDateTime todaysDateLDT = LocalDateTime.now();
-        String todayDate = todaysDateLDT.format(formatter); // "05/12/2016"
-
-
-		for(Game game : games){
-			if(game.date.equals(todayDate)){
-				todaysGames.addGame(game);
-			}
-		}
-		
-		return todaysGames;
+		return dateToGameMap.get(todaysDateLDT);
 	}
 	
 	// Get a list of Tomorrow's games
-	public GameList getTomorrowsGames(){
-        GameList tomorrowsGames = new GameList();
-        Date date = new Date();
-        //String todayDate= new SimpleDateFormat("MM/dd/yyyy").format(date);
-
-        // Java 8 DateTime
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+	public ArrayList<Game> getTomorrowsGames(){
         LocalDateTime tomorrowDateLTD = LocalDateTime.now();
         tomorrowDateLTD = tomorrowDateLTD.plusDays(1);
-        String tomorrowDate = tomorrowDateLTD.format(formatter); // "05/12/2016"
-
-
-        for(Game game : games){
-            if(game.date.equals(tomorrowDate)){
-                tomorrowsGames.addGame(game);
-            }
-        }
-
-        return tomorrowsGames;
+        return getGamesGivenDate(tomorrowDateLTD);
 	}
+
+    public ArrayList<Game> getGamesGivenDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        String dateToGet = date.format(formatter);
+        return dateToGameMap.get(dateToGet);
+    }
 	
-	public GameList getGamesGivenTeam(String team){
-        //String teamName = teamList.findTeamGivenNickname(team).toString();
-        Team temp = teamList.findTeamGivenNickname(team);
+	public ArrayList<Game> getGamesGivenTeam(String team){
+        Team temp = TeamList.findTeamGivenNickname(team);
         String teamName = (temp != null) ? temp.name : null;
-        GameList teamGames = new GameList();
-        for(Game game : games){
-            if(game.teams.contains(teamName)){
-                teamGames.addGame(game);
+
+        ArrayList<Game> teamGames = new ArrayList<>();
+        for(String date : dateToGameMap.keySet()) {
+            ArrayList<Game> currentDateGames = dateToGameMap.get(date);
+            for(Game game : currentDateGames) {
+                if(game.teams.contains(teamName)){
+                    teamGames.add(game);
+                }
             }
         }
 		return teamGames;
 	}
 	
-	public GameList getGamesGivenTime(String time){
+	public ArrayList<Game> getGamesGivenTime(String time){
 		return null;
 	}
 	
-	public void printGames(){
-		for(Game game : games){
+	public void printGames(ArrayList<Game> gamesToPrint){
+		for(Game game : gamesToPrint){
 			game.print();
 		}
 	}
