@@ -1,11 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
-/**
- * Created by polly.6 on 5/12/16.
- */
 public class Team {
     String name;
-    ArrayList<String> nicknames = new ArrayList<String>();
+    ArrayList<String> nicknames = new ArrayList<>();
 
     // Constructor
     public Team(String team_name) {
@@ -15,9 +13,7 @@ public class Team {
     // Overloaded constructor that allows for nicknames
     public Team(String team_name, String[] team_nicknames) {
         name = team_name;
-        for(String nickname : team_nicknames){
-            nicknames.add(nickname);
-        }
+        Collections.addAll(nicknames, team_nicknames);
     }
 
 }

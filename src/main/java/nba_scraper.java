@@ -23,10 +23,11 @@ public class nba_scraper {
 
 	public static void main(String[] args) throws IOException {
 		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
+		String filePath = "../nba_broadcast_schedule.html";
 
         // Write HTML to local file
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-	    BufferedWriter writer = new BufferedWriter(new FileWriter("src/nba_broadcast_schedule.html"));
+	    BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 	    String line;
 	    while ((line = reader.readLine()) != null) {
 	    	// For whatever reason, CDATA breaks Jsoup
@@ -38,7 +39,7 @@ public class nba_scraper {
 	    writer.close();
 		
         // parse the local HTML file
-		File nba_broadcast_html = new File("src/nba_broadcast_schedule.html");
+		File nba_broadcast_html = new File(filePath);
 		Document doc = Jsoup.parse(nba_broadcast_html, "UTF-8");
 
         // div with schedule in it
@@ -80,8 +81,8 @@ public class nba_scraper {
 			gameList.addGame(newGame);
 		}
 
-        ArrayList<Game> tomorrowsGames = gameList.getTomorrowsGames();
-        gameList.printGames(tomorrowsGames);
+        ArrayList<Game> todaysGames = gameList.getTodaysGames();
+        gameList.printGames(todaysGames);
 
         ArrayList<Game> raptorsGames = gameList.getGamesGivenTeam("toronto raptors");
         gameList.printGames(raptorsGames);
