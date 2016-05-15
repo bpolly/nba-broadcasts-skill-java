@@ -23,7 +23,7 @@ public class nba_scraper {
 
 	public static void main(String[] args) throws IOException {
 		URL url = new URL("http://www.nba.com/schedules/national_tv_schedule/");
-		String filePath = "../nba_broadcast_schedule.html";
+		String filePath = "src/main/nba_broadcast_schedule.html";
 
         // Write HTML to local file
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
