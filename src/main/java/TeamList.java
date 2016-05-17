@@ -1,11 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by polly.6 on 5/12/16.
- */
-public class TeamList {
-    static ArrayList<Team> teamList = new ArrayList<>(Arrays.asList(
+class TeamList {
+    private static ArrayList<Team> teamList = new ArrayList<>(Arrays.asList(
         new Team("atlanta hawks", new String[]{"atlanta hawks", "atlanta", "hawks"}),
         new Team("boston celtics", new String[]{"boston celtics", "boston", "celtics"}),
         new Team("brooklyn nets", new String[]{"brooklyn nets", "brooklyn", "nets", "new jersey"}),
@@ -39,7 +36,7 @@ public class TeamList {
     );
 
     // Find team with nickname {nickname}, return Team object
-    public static Team findTeamGivenNickname(String nickname){
+    static Team findTeamGivenNickname(String nickname){
         Team foundTeam = null;
         for(Team t : teamList){
             if(t.nicknames.contains(nickname.toLowerCase())){

@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
-public class GameList {
+class GameList {
 	int DEFAULT_CUTOFF = 7;
-	int listSize = 0;
-	HashMap<String, ArrayList<Game>> dateToGameMap = new HashMap<>();
+	private int listSize = 0;
+	private HashMap<String, ArrayList<Game>> dateToGameMap = new HashMap<>();
 
 
-    public GameList() {
+    GameList() {
 	}
 	
 	// Add a game to the GameList
-	public void addGame(Game game){
+    void addGame(Game game){
 		if(dateToGameMap.containsKey(game.date)) {
 			ArrayList<Game> games = dateToGameMap.get(game.date);
             games.add(game);
@@ -42,25 +42,25 @@ public class GameList {
 	}
 	
 	// Get a list of Today's games
-	public ArrayList<Game> getTodaysGames(){
+    ArrayList<Game> getTodaysGames(){
         LocalDateTime todaysDateLDT = LocalDateTime.now();
 		return getGamesGivenDate(todaysDateLDT);
 	}
 	
 	// Get a list of Tomorrow's games
-	public ArrayList<Game> getTomorrowsGames(){
+	ArrayList<Game> getTomorrowsGames(){
         LocalDateTime tomorrowDateLTD = LocalDateTime.now();
         tomorrowDateLTD = tomorrowDateLTD.plusDays(1);
         return getGamesGivenDate(tomorrowDateLTD);
 	}
 
-    public ArrayList<Game> getGamesGivenDate(LocalDateTime date) {
+    ArrayList<Game> getGamesGivenDate(LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         String dateToGet = date.format(formatter);
         return dateToGameMap.get(dateToGet);
     }
 	
-	public ArrayList<Game> getGamesGivenTeam(String team){
+    ArrayList<Game> getGamesGivenTeam(String team){
         Team temp = TeamList.findTeamGivenNickname(team);
         String teamName = (temp != null) ? temp.name : null;
 
@@ -80,7 +80,7 @@ public class GameList {
 		return null;
 	}
 	
-	public void printGames(ArrayList<Game> gamesToPrint){
+    void printGames(ArrayList<Game> gamesToPrint){
 		for(Game game : gamesToPrint){
 			game.print();
 		}
