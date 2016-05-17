@@ -1,15 +1,24 @@
-GetFirstEventIntent get events for {day}
-GetFirstEventIntent give me events for {day}
-GetFirstEventIntent what happened on {day}
-GetFirstEventIntent what happened
-GetFirstEventIntent {day}
+FindChannelGivenTeamAndDayIntent what channel are the {team} on {day}
+FindChannelGivenTeamAndDayIntent what channel are the {team} on
+FindChannelGivenTeamAndDayIntent what channel are the {team} playing on
+FindChannelGivenTeamAndDayIntent what channel are the {team} playing on {date}
+FindChannelGivenTeamAndDayIntent what network are the {team} on {day}
+FindChannelGivenTeamAndDayIntent what network are the {team} on
+FindChannelGivenTeamAndDayIntent what network are the {team} playing on
+FindChannelGivenTeamAndDayIntent what network are the {team} playing on {date}
 
-GetNextEventIntent yes
-GetNextEventIntent yup
-GetNextEventIntent sure
-GetNextEventIntent yes please
+FindTimeOrDateGivenTeamIntent what day do the {team} play next
+FindTimeOrDateGivenTeamIntent when do the {team} play next
+FindTimeOrDateGivenTeamIntent what time do the {team} play {day}
+FindTimeOrDateGivenTeamIntent when is the next {sport} game
 
-AMAZON.StopIntent no
-AMAZON.StopIntent nope
-AMAZON.StopIntent no thanks
-AMAZON.StopIntent no thank you
+FindOpponentGivenTeamIntent who do the {team} play
+FindOpponentGivenTeamIntent who do the {team} play {day}
+FindOpponentGivenTeamIntent what team do the {team} play next
+FindOpponentGivenTeamIntent where do the {team} play next
+
+FindGameGivenNetworkAndDayIntent what games are on {network} {day}
+
+HelpIntent help
+HelpIntent what can i ask you
+HelpIntent what commands doth thou containest
