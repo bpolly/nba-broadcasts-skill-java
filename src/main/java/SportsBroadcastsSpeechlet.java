@@ -16,6 +16,8 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -90,7 +92,28 @@ import com.amazon.speech.ui.SimpleCard;
  * <p>
  */
 public class SportsBroadcastsSpeechlet implements Speechlet {
+    private NbaScraper nbaScraper;
     private static final Logger log = LoggerFactory.getLogger(SportsBroadcastsSpeechlet.class);
+
+    /**
+     * The key to get the team from the intent.
+     */
+    private static final String TEAM_SLOT = "team";
+
+    /**
+     * The key to get the date from the intent.
+     */
+    private static final String DATE_SLOT = "date";
+
+    /**
+     * The key to get the network from the intent.
+     */
+    private static final String NETWORK_SLOT = "network";
+
+    /**
+     * The key to get the sport from the intent.
+     */
+    private static final String SPORT_SLOT = "sport";
 
     /**
      * URL prefix to download history content from Wikipedia.
@@ -154,6 +177,8 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
                 session.getSessionId());
 
         // any initialization logic goes here
+
+        nbaScraper = new NbaScraper();
     }
 
     @Override
@@ -173,35 +198,74 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
 
         Intent intent = request.getIntent();
         String intentName = intent.getName();
+        PlainTextOutputSpeech outputSpeech;
 
-        if ("GetFirstEventIntent".equals(intentName)) {
-            return handleFirstEventRequest(intent, session);
-        } else if ("GetNextEventIntent".equals(intentName)) {
-            return handleNextEventRequest(session);
-        } else if ("AMAZON.HelpIntent".equals(intentName)) {
-            // Create the plain text output.
-            String speechOutput =
-                    "With History Buff, you can get"
-                            + " historical events for any day of the year."
-                            + " For example, you could say today,"
-                            + " or August thirtieth, or you can say exit. Now, which day do you want?";
+        switch(intentName) {
+            case "FindChannelGivenTeamAndDayIntent":
+                // something
+                return handleFindChannelGivenTeamAndDayRequest(intent, session);
+            case "FindTimeOrDateGivenTeamIntent":
+                return handleFindTimeOrDateGivenTeamRequest(intent, session);
+            case "FindOpponentGivenTeamIntent":
+                return handleFindOpponentGivenTeamRequest(intent, session);
+            case "FindGameGivenNetworkAndDayIntent":
+                return handleFindGameGivenNetworkAndDayRequest(intent, session);
+            case "AMAZON.HelpIntent":
+                // Create the plain text output.
+                String speechOutput =
+                        "With History Buff, you can get"
+                                + " historical events for any day of the year."
+                                + " For example, you could say today,"
+                                + " or August thirtieth, or you can say exit. Now, which day do you want?";
 
-            String repromptText = "Which day do you want?";
+                String repromptText = "Which day do you want?";
 
-            return newAskResponse(speechOutput, false, repromptText, false);
-        } else if ("AMAZON.StopIntent".equals(intentName)) {
-            PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
-            outputSpeech.setText("Goodbye");
+                return newAskResponse(speechOutput, false, repromptText, false);
+            case "Amazon.StopIntent":
+                outputSpeech = new PlainTextOutputSpeech();
+                outputSpeech.setText("Goodbye");
 
-            return SpeechletResponse.newTellResponse(outputSpeech);
-        } else if ("AMAZON.CancelIntent".equals(intentName)) {
-            PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
-            outputSpeech.setText("Goodbye");
+                return SpeechletResponse.newTellResponse(outputSpeech);
+            case "AMAZON.CancelIntent":
+                outputSpeech = new PlainTextOutputSpeech();
+                outputSpeech.setText("Goodbye");
 
-            return SpeechletResponse.newTellResponse(outputSpeech);
-        } else {
-            throw new SpeechletException("Invalid Intent");
+                return SpeechletResponse.newTellResponse(outputSpeech);
+            default:
+                throw new SpeechletException("Invalid Intent");
         }
+
+
+
+//
+//        if ("GetFirstEventIntent".equals(intentName)) {
+//            return handleFirstEventRequest(intent, session);
+//        } else if ("GetNextEventIntent".equals(intentName)) {
+//            return handleNextEventRequest(session);
+//        } else if ("AMAZON.HelpIntent".equals(intentName)) {
+//            // Create the plain text output.
+//            String speechOutput =
+//                    "With History Buff, you can get"
+//                            + " historical events for any day of the year."
+//                            + " For example, you could say today,"
+//                            + " or August thirtieth, or you can say exit. Now, which day do you want?";
+//
+//            String repromptText = "Which day do you want?";
+//
+//            return newAskResponse(speechOutput, false, repromptText, false);
+//        } else if ("AMAZON.StopIntent".equals(intentName)) {
+//            PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+//            outputSpeech.setText("Goodbye");
+//
+//            return SpeechletResponse.newTellResponse(outputSpeech);
+//        } else if ("AMAZON.CancelIntent".equals(intentName)) {
+//            PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+//            outputSpeech.setText("Goodbye");
+//
+//            return SpeechletResponse.newTellResponse(outputSpeech);
+//        } else {
+//            throw new SpeechletException("Invalid Intent");
+//        }
     }
 
     @Override
@@ -258,6 +322,84 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
         return calendar;
     }
 
+
+    private SpeechletResponse handleFindChannelGivenTeamAndDayRequest(Intent intent, Session session) {
+        Slot teamSlot = intent.getSlot(TEAM_SLOT);
+        Slot dateSlot = intent.getSlot(DATE_SLOT);
+
+        if (exists(dateSlot) && exists(teamSlot)) {
+            String dateName = dateSlot.getValue();
+            String teamName = teamSlot.getValue();
+
+            // Find games using our given date
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDateTime givenDate = LocalDateTime.parse(dateName, formatter);
+
+            ArrayList<Game> gamesGivenDate = nbaScraper.gameList.getGamesGivenDate(givenDate);
+            ArrayList<String> foundNetworks = new ArrayList<String>();
+
+            // Search through our games found for given team
+            for(Game game : gamesGivenDate){
+                if(game.teams.contains(TeamList.findTeamGivenNickname(teamName))){
+                    foundNetworks = game.networks;
+                    break;
+                }
+            }
+
+
+            if (foundNetworks.size() > 0) {
+                // If we have the recipe, return it to the user.
+                PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+                String networks_stringified = stringifyNetworks(foundNetworks);
+                outputSpeech.setText(networks_stringified);
+
+                SimpleCard card = new SimpleCard();
+                card.setTitle("Game Networks"); // TODO - clean this up
+                card.setContent(networks_stringified);
+
+                return SpeechletResponse.newTellResponse(outputSpeech, card);
+            } else {
+                // TODO
+                // Output "could not find team playing on that date"
+                PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
+                String speechOutput = "I'm sorry, I could not find a game involving " + teamName;
+                outputSpeech.setText(speechOutput);
+
+                SimpleCard card = new SimpleCard();
+                card.setTitle("Game Networks"); // TODO - clean this up
+                card.setContent("Could not find games");
+//                String repromptSpeech = "What else can I help with?";
+//                return newAskResponse(speechOutput, repromptSpeech);
+                return SpeechletResponse.newTellResponse(outputSpeech, card);
+
+            }
+        } else if (!exists(dateSlot) && exists(teamSlot)) {
+            String teamName = teamSlot.getValue();
+            // TODO
+            // Find games from team from today
+        } else {
+            // There was no item in the intent so return the help prompt.
+            return getHelp();
+        }
+    }
+
+
+    private SpeechletResponse handleFindTimeOrDateGivenTeamRequest(Intent intent, Session session) {
+
+    }
+
+
+    private SpeechletResponse handleFindOpponentGivenTeamRequest(Intent intent, Session session) {
+
+    }
+
+    private SpeechletResponse handleFindGameGivenNetworkAndDayRequest(Intent intent, Session session) {
+
+    }
+
+    private SpeechletResponse handleHelpRequest(Intent intent, Session session) {
+
+    }
     /**
      * Prepares the speech to reply to the user. Obtain events from Wikipedia for the date specified
      * by the user (or for today's date, if no date is specified), and return those events in both
@@ -327,17 +469,17 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
         }
     }
 
-    /**
-     * Prepares the speech to reply to the user. Obtains the list of events as well as the current
-     * index from the session attributes. After getting the next set of events, increment the index
-     * and store it back in session attributes. This allows us to obtain new events without making
-     * repeated network calls, by storing values (events, index) during the interaction with the
-     * user.
-     * 
-     * @param session
-     *            object containing session attributes with events list and index
-     * @return SpeechletResponse object with voice/card response to return to the user
-     */
+        /**
+         * Prepares the speech to reply to the user. Obtains the list of events as well as the current
+         * index from the session attributes. After getting the next set of events, increment the index
+         * and store it back in session attributes. This allows us to obtain new events without making
+         * repeated network calls, by storing values (events, index) during the interaction with the
+         * user.
+         *
+         * @param session
+         *            object containing session attributes with events list and index
+         * @return SpeechletResponse object with voice/card response to return to the user
+         */
     private SpeechletResponse handleNextEventRequest(Session session) {
         String cardTitle = "More events on this day in history";
         ArrayList<String> events = (ArrayList<String>) session.getAttribute(SESSION_TEXT);
@@ -494,6 +636,44 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(repromptOutputSpeech);
         return SpeechletResponse.newAskResponse(outputSpeech, reprompt);
+    }
+
+    /**
+     * Creates a {@code SpeechletResponse} for the HelpIntent.
+     *
+     * @return SpeechletResponse spoken and visual response for the given intent
+     */
+    private SpeechletResponse getHelp() {
+        String speechOutput =
+                "You can ask questions about minecraft such as, what's "
+                        + "the recipe for a chest, or, you can say exit... "
+                        + "Now, what can I help you with?";
+        String repromptText =
+                "You can say things like, what's the recipe for a"
+                        + " chest, or you can say exit... Now, what can I help you with?";
+        return newAskResponse(speechOutput, false, repromptText, false);
+    }
+
+
+    private boolean exists(Slot slot){
+        return slot == null && slot.getValue() == null;
+    }
+
+    private String stringifyNetworks(ArrayList<String> networks_list) {
+        int list_size = networks_list.size();
+        boolean andValue = true;
+        String finalString = "";
+
+        for (int i = 0; i < list_size; i++) {
+            finalString +=(networks_list.get(i));
+            if (i < list_size - 2) {
+                finalString += ", ";
+            }
+            if (i == list_size - 2){
+                finalString += " and ";
+            }
+        }
+        return finalString;
     }
 
 }
