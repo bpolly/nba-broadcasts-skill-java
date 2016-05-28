@@ -1,5 +1,14 @@
 import java.util.ArrayList;
 
+/***
+ * Game Class
+ * Structure:
+ * date: 05/30/2016
+ * time: 9:00 pm
+ * teams:
+ * networks: TNT,TSN,
+ * 05/30/2016
+ */
 public class Game {
 	String date, time;
 	ArrayList<String> teams, networks;

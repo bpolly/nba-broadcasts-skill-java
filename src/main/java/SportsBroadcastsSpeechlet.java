@@ -331,20 +331,7 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
             String dateName = dateSlot.getValue();
             String teamName = teamSlot.getValue();
 
-            // Find games using our given date
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDateTime givenDate = LocalDateTime.parse(dateName, formatter);
 
-            ArrayList<Game> gamesGivenDate = nbaScraper.gameList.getGamesGivenDate(givenDate);
-            ArrayList<String> foundNetworks = new ArrayList<String>();
-
-            // Search through our games found for given team
-            for(Game game : gamesGivenDate){
-                if(game.teams.contains(TeamList.findTeamGivenNickname(teamName))){
-                    foundNetworks = game.networks;
-                    break;
-                }
-            }
 
 
             if (foundNetworks.size() > 0) {
@@ -377,6 +364,7 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
             String teamName = teamSlot.getValue();
             // TODO
             // Find games from team from today
+
         } else {
             // There was no item in the intent so return the help prompt.
             return getHelp();
@@ -675,5 +663,26 @@ public class SportsBroadcastsSpeechlet implements Speechlet {
         }
         return finalString;
     }
+
+    // Since we need to call this twice (1. given day 2. not given day, assume today)
+    private ArrayList<String> findNetworksGivenTeamAndDay(String dateName, String teamName){
+        // Find games using our given date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime givenDate = LocalDateTime.parse(dateName, formatter);
+
+        ArrayList<Game> gamesGivenDate = nbaScraper.gameList.getGamesGivenDate(givenDate);
+        ArrayList<String> foundNetworks = new ArrayList<String>();
+
+        // Search through our games found for given team
+        for(Game game : gamesGivenDate){
+            if(game.teams.contains(TeamList.findTeamGivenNickname(teamName))){
+                foundNetworks = game.networks;
+                break;
+            }
+        }
+
+        return foundNetworks;
+    }
+
 
 }

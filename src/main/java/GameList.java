@@ -2,10 +2,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 class GameList {
 	int DEFAULT_CUTOFF = 7;
@@ -80,9 +77,12 @@ class GameList {
 		return null;
 	}
 	
-    void printGames(ArrayList<Game> gamesToPrint){
-		for(Game game : gamesToPrint){
-			game.print();
+    void printGames(){
+
+		for(Map.Entry<String, ArrayList<Game>> pair : dateToGameMap.entrySet()){
+            for(Game game : pair.getValue()) {
+                game.print();
+            }
 		}
 	}
 
